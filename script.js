@@ -1,62 +1,100 @@
 
 const forecastData = [
-  { month: "Lipiec", low: 125000, base: 138000, high: 150000 },
-  { month: "Sierpień", low: 130000, base: 145000, high: 165000 },
-  { month: "Wrzesień", low: 135000, base: 150000, high: 170000 },
-  { month: "Październik", low: 138000, base: 155000, high: 175000 },
-  { month: "Listopad", low: 140000, base: 160000, high: 185000 },
-  { month: "Grudzień", low: 145000, base: 165000, high: 200000 },
+  {
+    "date": "2025-07-15",
+    "price": 68657.88
+  },
+  {
+    "date": "2025-07-31",
+    "price": 68692.1
+  },
+  {
+    "date": "2025-08-15",
+    "price": 67399.14
+  },
+  {
+    "date": "2025-08-31",
+    "price": 60305.76
+  },
+  {
+    "date": "2025-09-15",
+    "price": 69343.13
+  },
+  {
+    "date": "2025-09-30",
+    "price": 64154.96
+  },
+  {
+    "date": "2025-10-15",
+    "price": 70666.23
+  },
+  {
+    "date": "2025-10-31",
+    "price": 60572.73
+  },
+  {
+    "date": "2025-11-15",
+    "price": 61499.17
+  },
+  {
+    "date": "2025-11-30",
+    "price": 63359.29
+  },
+  {
+    "date": "2025-12-15",
+    "price": 63822.88
+  },
+  {
+    "date": "2025-12-31",
+    "price": 71403.88
+  }
 ];
 
-async function fetchPrice() {
-  try {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
-    const data = await res.json();
-    const price = data.bitcoin.usd;
-    document.getElementById('price').innerHTML = `💰 Aktualna cena BTC: <strong>$${price.toLocaleString()}</strong>`;
-    updateAlerts(price);
-  } catch (e) {
-    document.getElementById('price').innerHTML = "Błąd pobierania ceny";
-  }
-}
-
-function updateAlerts(price) {
-  const alerts = [];
-  if (price >= 145000) alerts.push("BTC przekroczył 145 000 USD!");
-  if (price >= 175000) alerts.push("BTC zbliża się do scenariusza optymistycznego!");
-  if (price <= 125000) alerts.push("BTC blisko dolnego zakresu scenariusza negatywnego.");
-  if (alerts.length === 0) alerts.push("Brak alertów.");
-  document.getElementById('alerts').innerHTML = '<h2>🔔 Alerty</h2><ul>' + alerts.map(a => `<li>${a}</li>`).join('') + '</ul>';
-}
-
-function renderForecastChart() {
-  const ctx = document.getElementById('forecastChart').getContext('2d');
-  new Chart(ctx, {
+const ctx = document.getElementById('btcChart').getContext('2d');
+const chart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: forecastData.map(d => d.month),
-      datasets: [
-        { label: 'Negatywny', data: forecastData.map(d => d.low), borderColor: '#f87171', fill: false },
-        { label: 'Bazowy', data: forecastData.map(d => d.base), borderColor: '#60a5fa', fill: false },
-        { label: 'Optymistyczny', data: forecastData.map(d => d.high), borderColor: '#34d399', fill: false },
-      ]
+        labels: forecastData.map(point => point.date),
+        datasets: [{
+            label: 'Prognozowana cena BTC (USD)',
+            data: forecastData.map(point => point.price),
+            fill: false,
+            borderColor: 'rgb(255, 99, 132)',
+            tension: 0.1
+        }]
     },
     options: {
-      responsive: true,
-      plugins: { legend: { position: 'bottom' } },
-      scales: {
-        y: {
-          ticks: {
-            callback: value => `$${(value/1000).toFixed(0)}k`
-          }
+        responsive: true,
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return 'Data: ' + context[0].label;
+                    },
+                    label: function(context) {
+                        return 'Cena: $' + context.formattedValue;
+                    }
+                }
+            },
+            legend: {
+                display: true
+            }
+        },
+        scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Data'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'Cena w USD'
+                }
+            }
         }
-      }
     }
-  });
-}
-
-window.onload = () => {
-  fetchPrice();
-  renderForecastChart();
-  setInterval(fetchPrice, 60000);
-};
+});
