@@ -13,7 +13,8 @@ const pessimisticScenario = [117000, 116000, 110000, 108000, 105000, 102000, 100
 const optimisticScenario = [117000, 120000, 130000, 135000, 150000, 160000, 180000, 190000, 210000, 220000, 240000, 260000];
 
 const ctx = document.getElementById('btcChart').getContext('2d');
-const chart = new Chart(ctx, {
+
+const btcChart = new Chart(ctx, {
   type: 'line',
   data: {
     labels: forecastDates,
@@ -23,35 +24,41 @@ const chart = new Chart(ctx, {
         data: baseScenario,
         borderColor: 'rgb(54, 162, 235)',
         backgroundColor: 'rgba(54, 162, 235, 0.3)',
-        tension: 0.2,
-        fill: false
+        tension: 0.3,
+        fill: false,
+        pointRadius: 5,
+        pointHoverRadius: 7,
       },
       {
         label: 'Scenariusz pesymistyczny',
         data: pessimisticScenario,
         borderColor: 'rgb(255, 99, 132)',
         backgroundColor: 'rgba(255, 99, 132, 0.3)',
-        tension: 0.2,
-        fill: false
+        tension: 0.3,
+        fill: false,
+        pointRadius: 5,
+        pointHoverRadius: 7,
       },
       {
         label: 'Scenariusz optymistyczny',
         data: optimisticScenario,
         borderColor: 'rgb(75, 192, 192)',
         backgroundColor: 'rgba(75, 192, 192, 0.3)',
-        tension: 0.2,
-        fill: false
+        tension: 0.3,
+        fill: false,
+        pointRadius: 5,
+        pointHoverRadius: 7,
       }
     ]
   },
   options: {
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         callbacks: {
           title: ctx => {
             const dateStr = ctx[0].label;
-            // Format daty na np. "15 lipca 2025"
             const date = new Date(dateStr);
             const options = { day: 'numeric', month: 'long', year: 'numeric' };
             return date.toLocaleDateString('pl-PL', options);
